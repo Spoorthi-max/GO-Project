@@ -1,4 +1,4 @@
-💸 SplitLedger – Expense Settlement API
+#💸 SplitLedger – Expense Settlement API
 
 Go · Gin · GORM · SQLite · Docker Ready
 
