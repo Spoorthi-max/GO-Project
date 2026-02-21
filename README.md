@@ -1,35 +1,35 @@
-#💸 SplitLedger – Expense Settlement API
+# 💸 SplitLedger – Expense Settlement API
 
 Go · Gin · GORM · SQLite · Docker Ready
 
-📋 Table of Contents
+## 📋 Table of Contents
 
-Project Overview
+1) Project Overview
 
-Features
+2) Features
 
-Tech Stack
+3) Tech Stack
 
-System Architecture
+4) System Architecture
 
-Database Schema
+5) Database Schema
 
-API Endpoints
+6) API Endpoints
 
-Getting Started
+7) Getting Started
 
-Environment Variables
+8) Environment Variables
 
-Settlement Algorithm
+9) Settlement Algorithm
 
-Money Handling Strategy
+10) Money Handling Strategy
 
-Example curl Requests
+11) Example curl Requests
 
-Future Improvements
+12) Future Improvements
 
 
-🎯 Project Overview
+## 🎯 Project Overview
 
 SplitLedger – Expense Settlement API is a backend system built in Go that allows users to manage shared group expenses and automatically calculate optimized settlements (like Splitwise).
 
@@ -45,7 +45,7 @@ Compute minimized transactions required to settle debts
 
 The system focuses on financial correctness and optimized debt simplification using a greedy settlement algorithm.
 
-📌 Key Highlights
+## 📌 Key Highlights
 
 • RESTful API design using Gin
 • Optimized settlement algorithm (minimal transactions)
@@ -55,7 +55,7 @@ The system focuses on financial correctness and optimized debt simplification us
 • Clean separation of models and database logic
 • CORS-enabled backend
 
-✨ Features
+## ✨ Features
 Feature	Description
 👥 User Management	Create and list users
 👪 Group Creation	Create expense groups
@@ -65,7 +65,7 @@ Feature	Description
 💾 Persistent Storage	SQLite database with GORM
 🔄 Restart Safe	Data persists across server restarts
 
-🛠 Tech Stack
+## 🛠 Tech Stack
 Layer	Technology	Purpose
 Language	Go 1.22	High-performance backend
 Framework	Gin	HTTP routing
@@ -75,7 +75,7 @@ Money Type	int64 (cents)	Precision-safe finance
 Middleware	CORS	Frontend-backend communication
 🏗 System Architecture
 
-High-Level Flow
+## High-Level Flow
 
 Client → HTTP Request → Gin Router → Handler
                                ↓
@@ -85,7 +85,7 @@ Client → HTTP Request → Gin Router → Handler
                                ↓
                            SQLite DB
 
-Core Components:
+## Core Components:
 
 models/ → Entity definitions
 
@@ -95,7 +95,7 @@ main.go → Routing + business logic
 
 expense.db → Persistent database file
 
-🗄 Database Schema
+## 🗄 Database Schema
 Users
 Field	Type
 ID	uint
@@ -119,7 +119,7 @@ ExpenseID	uint
 UserID	uint
 Share	int64 (cents)
 
-📡 API Endpoints
+## 📡 API Endpoints
 Users
 
 POST /users
@@ -138,7 +138,7 @@ Expenses
 POST /expenses
 Add new expense
 
-Example Body:
+## Example Body:
 
 {
   "group_id": 1,
@@ -152,7 +152,7 @@ GET /settle/{groupID}
 
 Returns optimized settlement transactions.
 
-🚀 Getting Started
+## 🚀 Getting Started
 Prerequisites
 
 Go 1.22+
@@ -162,20 +162,23 @@ Git
 Step 1: Clone Repository
 git clone https://github.com/YOUR_USERNAME/GO-Project.git
 cd GO-Project
+
 Step 2: Install Dependencies
 go mod tidy
+
 Step 3: Run Server
 go run main.go
 
 Server runs on:
 
 http://localhost:8080
-⚙️ Environment Variables
+
+## ⚙️ Environment Variables
 
 No required environment variables.
 SQLite database file (expense.db) is created automatically.
 
-🧠 Settlement Algorithm
+## 🧠 Settlement Algorithm
 
 The system minimizes the number of transactions required to settle debts.
 
@@ -184,26 +187,22 @@ Algorithm Steps
 Calculate total amount paid by each user.
 
 Calculate total amount owed by each user.
-
 Compute net balance = paid − owed.
 
 Classify users:
 
 Positive balance → Creditors
-
 Negative balance → Debtors
 
 Apply greedy matching:
 
 Match highest debtor with highest creditor.
-
 Transfer minimum amount possible.
-
 Repeat until all balances are zero.
 
 Time Complexity: O(n)
 
-💰 Money Handling Strategy
+## 💰 Money Handling Strategy
 
 All monetary values are stored using:
 
@@ -251,7 +250,7 @@ Response:
     "amount": 300
   }
 ]
-🔮 Future Improvements
+## 🔮 Future Improvements
 Category	Enhancement
 🔐 Auth	JWT-based authentication
 📊 Dashboard	User expense summaries
