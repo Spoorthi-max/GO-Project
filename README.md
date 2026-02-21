@@ -1,83 +1,144 @@
-📌 Project Title
+💸 SplitLedger – Expense Settlement API
 
-Splitwise-Style Expense Tracker REST API (Go + Gin + GORM)
+Go · Gin · GORM · SQLite · Docker Ready
 
-📖 Project Description
+📋 Table of Contents
 
-This project is a REST API built using Go (Golang) to track shared expenses and split bills among friends.
+Project Overview
+
+Features
+
+Tech Stack
+
+System Architecture
+
+Database Schema
+
+API Endpoints
+
+Getting Started
+
+Environment Variables
+
+Settlement Algorithm
+
+Money Handling Strategy
+
+Example curl Requests
+
+Future Improvements
+
+
+🎯 Project Overview
+
+SplitLedger – Expense Settlement API is a backend system built in Go that allows users to manage shared group expenses and automatically calculate optimized settlements (like Splitwise).
 
 Users can:
 
-Create groups (e.g., roommates, trip groups)
+Create groups (trip, roommates, events)
 
 Add shared expenses
 
-Split expenses equally among members
+Split bills equally
 
-Compute optimized settlements minimizing the number of transactions
+Compute minimized transactions required to settle debts
 
-The system implements a settlement algorithm to reduce unnecessary payments between users.
+The system focuses on financial correctness and optimized debt simplification using a greedy settlement algorithm.
 
-🛠️ Tech Stack
+📌 Key Highlights
 
-Language: Go (Golang)
+• RESTful API design using Gin
+• Optimized settlement algorithm (minimal transactions)
+• Money stored safely using int64 (no floating point errors)
+• SQLite-based persistent storage
+• Group-based expense isolation
+• Clean separation of models and database logic
+• CORS-enabled backend
 
-Framework: Gin
+✨ Features
+Feature	Description
+👥 User Management	Create and list users
+👪 Group Creation	Create expense groups
+💰 Add Expense	Add shared expenses
+⚖️ Equal Split	Automatically divides amount among members
+🤝 Settlement	Calculates optimized minimal transactions
+💾 Persistent Storage	SQLite database with GORM
+🔄 Restart Safe	Data persists across server restarts
 
-ORM: GORM
+🛠 Tech Stack
+Layer	Technology	Purpose
+Language	Go 1.22	High-performance backend
+Framework	Gin	HTTP routing
+ORM	GORM	Database abstraction
+Database	SQLite	Persistent data store
+Money Type	int64 (cents)	Precision-safe finance
+Middleware	CORS	Frontend-backend communication
+🏗 System Architecture
 
-Database: SQLite
+High-Level Flow
 
-Money Handling: int64 (stored in cents)
+Client → HTTP Request → Gin Router → Handler
+                               ↓
+                          Business Logic
+                               ↓
+                           GORM ORM
+                               ↓
+                           SQLite DB
 
-🗂️ Database Schema
-User
+Core Components:
+
+models/ → Entity definitions
+
+database/ → DB connection logic
+
+main.go → Routing + business logic
+
+expense.db → Persistent database file
+
+🗄 Database Schema
+Users
 Field	Type
 ID	uint
 Name	string
 Email	string
 CreatedAt	timestamp
-Group
+Groups
 Field	Type
 ID	uint
 Name	string
-Expense
+Expenses
 Field	Type
 ID	uint
 GroupID	uint
 PaidBy	uint
 Amount	int64 (cents)
-ExpenseSplit
+ExpenseSplits
 Field	Type
 ID	uint
 ExpenseID	uint
 UserID	uint
 Share	int64 (cents)
-💰 Money Handling Approach
 
-All monetary values are stored using int64 in cents instead of float.
+📡 API Endpoints
+Users
 
-Example:
-
-₹900 stored as 900 (cents representation)
-
-Prevents floating-point precision errors
-
-Ensures financial accuracy
-
-No float or decimal type is used.
-
-🔗 API Endpoints
-Create User
 POST /users
-Get All Users
-GET /users
-Create Group
-POST /groups
-Add Expense
-POST /expenses
+Create new user
 
-Body:
+GET /users
+List all users
+
+Groups
+
+POST /groups
+Create new group
+
+Expenses
+
+POST /expenses
+Add new expense
+
+Example Body:
 
 {
   "group_id": 1,
@@ -86,52 +147,117 @@ Body:
   "users": [1,2,3]
 }
 Settlement
+
 GET /settle/{groupID}
-⚙️ Settlement Algorithm
 
-The system calculates the net balance of each user in a group:
+Returns optimized settlement transactions.
 
-Add total amount paid by each user.
+🚀 Getting Started
+Prerequisites
 
-Subtract their share from total expenses.
+Go 1.22+
 
-Users with positive balance → Creditors.
+Git
 
-Users with negative balance → Debtors.
+Step 1: Clone Repository
+git clone https://github.com/YOUR_USERNAME/GO-Project.git
+cd GO-Project
+Step 2: Install Dependencies
+go mod tidy
+Step 3: Run Server
+go run main.go
+
+Server runs on:
+
+http://localhost:8080
+⚙️ Environment Variables
+
+No required environment variables.
+SQLite database file (expense.db) is created automatically.
+
+🧠 Settlement Algorithm
+
+The system minimizes the number of transactions required to settle debts.
+
+Algorithm Steps
+
+Calculate total amount paid by each user.
+
+Calculate total amount owed by each user.
+
+Compute net balance = paid − owed.
+
+Classify users:
+
+Positive balance → Creditors
+
+Negative balance → Debtors
 
 Apply greedy matching:
 
-Match largest debtor with largest creditor.
+Match highest debtor with highest creditor.
 
-Transfer minimum of the two balances.
+Transfer minimum amount possible.
 
-Repeat until balances are zero.
-
-This minimizes the number of transactions required.
+Repeat until all balances are zero.
 
 Time Complexity: O(n)
 
-📊 Example Scenario
+💰 Money Handling Strategy
 
-Users: A, B, C
-Expense: ₹900
-Paid by A
-Split equally
+All monetary values are stored using:
 
-Each share = ₹300
+int64 (in cents)
 
-Net balances:
+Example:
 
-A → +600
+₹900 → stored as 900
 
-B → -300
+Why?
 
-C → -300
+• Avoid floating-point precision issues
+• Ensure financial correctness
+• No rounding errors
 
-Settlement:
+No float or decimal type is used anywhere.
 
-B pays A ₹300
+📝 Example curl Requests
+Create User
+curl -X POST http://localhost:8080/users \
+-H "Content-Type: application/json" \
+-d '{"name":"A","email":"a@test.com"}'
+Create Group
+curl -X POST http://localhost:8080/groups \
+-H "Content-Type: application/json" \
+-d '{"name":"Trip Group"}'
+Add Expense
+curl -X POST http://localhost:8080/expenses \
+-H "Content-Type: application/json" \
+-d '{"group_id":1,"paid_by":1,"amount":900,"users":[1,2,3]}'
+Settlement
+curl http://localhost:8080/settle/1
 
-C pays A ₹300
+Response:
 
-Minimum transactions = 2
+[
+  {
+    "from_user_id": 2,
+    "to_user_id": 1,
+    "amount": 300
+  },
+  {
+    "from_user_id": 3,
+    "to_user_id": 1,
+    "amount": 300
+  }
+]
+🔮 Future Improvements
+Category	Enhancement
+🔐 Auth	JWT-based authentication
+📊 Dashboard	User expense summaries
+🧠 Algorithm	Support unequal splits
+🧠 Algorithm	Advanced debt graph simplification
+💳 Finance	Currency support
+📄 Docs	Swagger API documentation
+🐳 DevOps	Dockerized deployment
+🧪 Testing	Unit & integration tests
